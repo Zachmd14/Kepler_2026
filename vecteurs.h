@@ -1,27 +1,14 @@
 #ifndef VECTEURS_H
 #define VECTEURS_H
 
-/*
- * Planet code struct, with position, speed and trajectory
- */
-struct vector
-{
-  double pos_x;
-  double spe_x;
+typedef struct {
+    double x, y, z;
+} vector;
 
-  double pos_y;
-  double spe_y;
-
-  double pos_z;
-  double spe_z;
-};
-
-struct trajectory
-{
-  char name[50];
-  double points[];
-  
-};
+vector vec_add(vector a, vector b);
+vector vec_sub(vector a, vector b);
+vector vec_scale(vector v, double s);
+double vec_norm(vector v);
 
 
 #endif
