@@ -12,5 +12,4 @@ int main(){
   test = vec_scale(test, 2);
   printf("value of x : %f\n", test.x);
   return 0;
-  // jddjjdjd
 }
