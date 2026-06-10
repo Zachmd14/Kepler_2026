@@ -1,0 +1,1 @@
+- Mettre les constantes dans constant.c
