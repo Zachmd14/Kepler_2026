@@ -23,6 +23,7 @@
 build/
 dist/
 Debug/
+bin/
 Release/
 *.dSYM/
 
@@ -62,7 +63,6 @@ deps/
 CMakeCache.txt
 CMakeFiles/
 cmake_install.cmake
-Makefile
 CMakeUserPresets.json
 
 # Autotools
@@ -118,7 +118,6 @@ Desktop.ini
 - `*.a`, `*.lib` - Static libraries
 - `build/`, `dist/` - Build directories
 - `*.gch`, `*.pch` - Precompiled headers
-- `Makefile` (if using CMake) - Generated makefiles
 
 ### For Emacs:
 - `*~` - Backup files
@@ -146,3 +145,4 @@ build/
 \#*\#
 .\#*
 *.swp
+executable

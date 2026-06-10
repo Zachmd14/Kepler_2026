@@ -1,1 +1,2 @@
 - Mettre les constantes dans constant.c
+- faire une fonction test pour les fonctions des vecteurs
