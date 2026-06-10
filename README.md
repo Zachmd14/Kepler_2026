@@ -1,2 +1,3 @@
 - Mettre les constantes dans constant.c
-- Faire la section specification cahier des charges
+- faire liste chainee ou juste des printfs pour la trajectoire
+- finir constantes si il en reste
