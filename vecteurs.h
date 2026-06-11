@@ -13,12 +13,21 @@ typedef struct {
   double t;
 } point;
 
+// Trajectory
+typedef struct {
+  point* p;
+  int size;   
+  int capacity;
+} trajectory;
+
 // Planet structure
 typedef struct {
-  char name[50];
-  double mass;
-  // trajectory;
-  double periph;
+  char *name;
+  double mass; // masse
+  trajectory traj; // trajectoire
+  double perih; // perihelie
+  double dga; // demi-grand axe
+  double e;  // excentricite
 } planet;
 
 // Functions definitions
