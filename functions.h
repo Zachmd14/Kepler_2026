@@ -3,10 +3,12 @@
 
 #include "vecteurs.h"
 #include "constants.h"
+#include <stdio.h>
 
 double calculDistancePerihelie(planet p);
 double calculVitessePerihelie(planet p);
 
-void eulerSimple(planet p, vector pos, int step, double t);
+void eulerSimple(planet *p, int step, double t);
+void exportJson(planet *p, FILE *fichier);
 
 #endif

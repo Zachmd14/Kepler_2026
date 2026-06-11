@@ -8,9 +8,9 @@ typedef struct {
 
 // Point structure
 typedef struct {
-  vector r;
-  vector v;
-  double t;
+  vector r; // position
+  vector v; // vitesse
+  double t; // temps
 } point;
 
 // Trajectory
@@ -22,7 +22,10 @@ typedef struct {
 
 // Planet structure
 typedef struct {
-  char *name;
+  vector pos; // position
+  vector spe;  // vitesse (speed)
+  vector acc; // acceleration
+  char *name; // nom
   double mass; // masse
   trajectory traj; // trajectoire
   double perih; // perihelie
@@ -39,6 +42,8 @@ double vec_norm(vector v);
 void init_trajectory(trajectory* t, int initial_capacity);
 void add_point(trajectory *t, point new_point);
 void free_trajectory(trajectory* t);
+
+vector accel(vector position);
 
 
 #endif

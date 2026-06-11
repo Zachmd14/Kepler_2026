@@ -60,5 +60,40 @@ int main() {
     printf("Temps : %f -> Position X : %f\n", tp.traj.p[i].t, tp.traj.p[i].r.x);
   }
 
+  planet test2;
+  test2.name = "Planete test 2";
+  test2.mass = masseTerre;
+  test2.dga = dgaTerre;
+  test2.e = exTerre;
+  test2.perih = calculDistancePerihelie(test2);
+
+  int step = 30;
+  init_trajectory(&test2.traj, step);
+
+  // Points de departs
+  point depart;
+  depart.r.x = test2.perih; // placée sur l'axe X à la périhélie
+  depart.r.y = 0.0;
+  depart.r.z = 0.0;
+  depart.v.x = 0.0;
+  depart.v.y = calculVitessePerihelie(test2); // vitesse perpendiculaire, sur Y
+  depart.v.z = 0.0;
+  depart.t = 0.0;
+  add_point(&test2.traj, depart);
+
+  eulerSimple(&test2, step, DT);
+
+  // Export en JSON
+  FILE *fichier = fopen("trajectoire.json", "w");
+  if (fichier == NULL) {
+    printf("Erreur ouverture fichier\n");
+    return 1;
+  }
+  exportJson(&test2, fichier);
+  fclose(fichier);
+  printf("Fichier trajectoire.json genere avec %d points\n", test2.traj.size);
+
+  free_trajectory(&test2.traj);
+
   return 0;
 }
