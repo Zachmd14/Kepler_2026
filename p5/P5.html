@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projet Orbites</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #050d1a;
+    color: white;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+header {
+    padding: 18px;
+    text-align: center;
+    background: rgba(255,255,255,0.03);
+    border-bottom: 1px solid rgba(255,215,0,0.2);
+}
+h1 {
+    color: #ffd700;
+    font-size: 2.2em;
+    letter-spacing: 2px;
+}
+.instructions {
+    max-width: 500px;
+    margin: 15px auto 0 auto;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 15px 20px;
+}
+.instructions p { font-size: 0.95em; margin: 5px 0; color: #ccc; }
+input[type="file"] {
+    margin-top: 10px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,215,0,0.4);
+    background: #0d1b2a;
+    color: white;
+    cursor: pointer;
+}
+.main-layout {
+    display: flex;
+    flex: 1;
+}
+.left-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+.legend {
+    margin-top: 10px;
+    background: rgba(0,0,0,0.4);
+    border-radius: 8px;
+    padding: 8px 20px;
+    display: flex;
+    gap: 20px;
+    font-size: 0.85em;
+    align-items: center;
+}
+.legend-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 5px;
+}
+.right-panel {
+    width: 260px;
+    padding: 20px 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 15px;
+    border-left: 1px solid rgba(255,255,255,0.07);
+}
+.card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 12px;
+    padding: 15px;
+}
+.card-title {
+    color: #ffd700;
+    font-size: 0.85em;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+}
+.card p { font-size: 0.82em; color: #aac; margin: 5px 0; }
+.reset-btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: #ffd700;
+    color: #000;
+    font-weight: bold;
+    font-size: 1em;
+    cursor: pointer;
+}
+.reset-btn:hover { background: #ffe84d; }
+</style>
+</head>
+<body>
+
+<header>
+    <h1>Projet Orbites</h1>
+    <div class="instructions">
+      <p>Charger un fichier JSON pour commencer</p>
+      <p>Maintenez le clic gauche pour animer la trajectoire</p>
+      <input type="file" onchange="readFile(this)">
+    </div>
+</header>
+
+<div class="main-layout">
+
+  <div class="left-panel">
+    
+    <div class="legend">
+      <span><span class="legend-dot" style="background:#ffd700;box-shadow:0 0 6px #ffd700;"></span>Soleil</span>
+      <span><span class="legend-dot" style="background:rgb(80,160,255);"></span>Terre</span>
+      <span style="border-top:2px dashed #e05050;width:24px;display:inline-block;"></span> Trajectoire
+    </div>
+  </div>
+
+  <div class="right-panel">
+    <div class="card">
+      <div class="card-title">Contrôles</div>
+      <p>Clic gauche : animation</p>
+      <p>Reset : retour au début</p>
+      <button class="reset-btn" onclick="reset()">⟳ Reset</button>
+    </div>
+  </div>
+
+</div>
+
+<script src="p5.min.js"></script>
+
+<script>
+let echelle = 1000000000;
+let reader = new FileReader();
+let file;
+let dataJSON;
+let method;
+
+function readFile(input) {
+  let file = input.files[0];
+
+  let reader = new FileReader();
+
+  reader.readAsText(file);
+
+  reader.onload = function() {
+    dataJSON = JSON.parse(reader.result);
+	method = Object.keys(dataJSON)[0];
+	
+    console.log(dataJSON[method]);
+    for(let i=0;i<3750;i++){
+      point(200+dataJSON[method][i][0][0]/echelle, 200+dataJSON[method][i][0][1]/echelle);
+      i++;
+    }
+    stroke(255,0,0);
+    fill(0,100,200);
+    circle(200+dataJSON[method][0][0][0]/echelle, 200+dataJSON[method][0][0][1]/echelle,10);
+  
+  };
+
+  reader.onerror = function() {
+    console.log(reader.error);
+  };
+
+}
+
+function reset() {
+a = 0;
+loop();
+noLoop();
+
+}
+
+function mousePressed() {
+if (mouseButton === LEFT) {
+  loop();
+  }
+}
+
+function mouseReleased() {
+  noLoop();
+}
+
+function setup() {
+  noLoop()
+  let cnv = createCanvas(720, 400);
+  cnv.parent(document.querySelector('.left-panel'));
+  stroke(255,255,0);
+  fill(255,255,0);
+  circle(200,200,30); 
+  a = 0;
+}
+
+function draw() {
+  background(0);
+  stroke(255,255,0);
+  fill(255,255,0);
+  circle(200,200,30); 
+  stroke(255,0,0);
+  fill(0,100,200);
+  circle(200+dataJSON[method][a][0][0]/echelle, 200+dataJSON[method][a][0][1]/echelle,10);
+  
+  if (a <36501)
+	{a = a+1;}
+  else {a = 0;}
+}
+</script>
+
+</body>
+</html>
