@@ -1,4 +1,6 @@
 #include "vecteurs.h"
+#include "constants.h"
+#include <math.h>
 #include <stdlib.h>
 
 // Add two vectors coordinates
@@ -28,6 +30,12 @@ vector vec_scale(vector v, double s) {
   return result;
 }
 
+// Find the norm of a vector
+double vec_norm(vector v) {
+  double result = sqrt((v.x * v.x) +(v.y * v.y)+(v.z * v.z));
+  return result;
+}
+
 // fonction initialisation de la trajectoire
 void init_trajectory(trajectory *t, int initial_capacity) {
   t->p = malloc(initial_capacity * sizeof(point));
@@ -39,29 +47,39 @@ void init_trajectory(trajectory *t, int initial_capacity) {
   t->capacity = initial_capacity;
 }
 
-// fonctiona ajout de points
-void add_point(trajectory *t, point new_point) {
-  // Si le tableau est plein alors on l'agrendi.
-  if (t->size >= t->capacity) {
-    t->capacity *= 2; // On double la capacité
-    t->p = realloc(t->p, t->capacity * sizeof(point));
+  // fonctiona ajout de points
+  void add_point(trajectory * t, point new_point) {
+    // Si le tableau est plein alors on l'agrendi.
+    if (t->size >= t->capacity) {
+      t->capacity *= 2; // On double la capacité
+      t->p = realloc(t->p, t->capacity * sizeof(point));
 
-    if (t->p == NULL) {
-      // erreur de reallocation memoire
-      exit(EXIT_FAILURE);
+      if (t->p == NULL) {
+        // erreur de reallocation memoire
+        exit(EXIT_FAILURE);
+      }
     }
+
+    // On ajoute le point
+    t->p[t->size] = new_point;
+    // on incrémente la taille
+    t->size++;
   }
 
-  // On ajoute le point 
-  t->p[t->size] = new_point;
-  // on incrémente la taille
-  t->size++;
-}
-
-// fonction liberation de la memoire
-void free_trajectory(trajectory* t) {
+  // fonction liberation de la memoire
+  void free_trajectory(trajectory * t) {
     free(t->p);
     t->p = NULL;
     t->size = 0;
     t->capacity = 0;
+}
+
+// calcul du vecteur acceleration
+vector accel(vector position) {
+  vector a;
+  double dst = vec_norm(position);
+  double coef = -constanteGravitation * masseSoleil/dst*dst;
+  a.x = coef*position.x;
+  a.y = coef*position.y;
+  a.z = coef*position.z;
 }
