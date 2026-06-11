@@ -11,4 +11,5 @@ static const double masseSoleil = 1.9884*pow(10, 30); // Masse du soleil
 
 static const double constanteGravitation = 6.67259*pow(10,-11); // Constante Gravitationnelle
 
+static const double DT = 86400.0; // Pas en une journee
 #endif    
