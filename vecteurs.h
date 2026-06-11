@@ -17,7 +17,7 @@ typedef struct {
 typedef struct {
   point* p;
   int size;   
-  int capacity;
+  int capacity; // nombre de points max avant de devoir re-allouer de la memoire
 } trajectory;
 
 // Planet structure
@@ -30,10 +30,15 @@ typedef struct {
   double e;  // excentricite
 } planet;
 
-// Functions definitions
+// Vectors functions
 vector vec_add(vector a, vector b);
 vector vec_sub(vector a, vector b);
 vector vec_scale(vector v, double s);
 double vec_norm(vector v);
+
+void init_trajectory(trajectory* t, int initial_capacity);
+void add_point(trajectory *t, point new_point);
+void free_trajectory(trajectory* t);
+
 
 #endif
