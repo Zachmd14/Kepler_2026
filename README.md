@@ -1,3 +1,2 @@
 - Mettre les constantes dans constant.c
 - faire liste chainee ou juste des printfs pour la trajectoire
-- finir constantes si il en reste
