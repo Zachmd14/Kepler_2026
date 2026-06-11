@@ -78,9 +78,10 @@ void init_trajectory(trajectory *t, int initial_capacity) {
 vector accel(vector position) {
   vector a;
   double dst = vec_norm(position);
-  double coef = -constanteGravitation * masseSoleil/dst*dst;
+  double coef = -constanteGravitation * masseSoleil/(dst*dst*dst);
   a.x = coef*position.x;
   a.y = coef*position.y;
-  a.z = coef*position.z;
+  a.z = 0;
+  return a;
 }
 
