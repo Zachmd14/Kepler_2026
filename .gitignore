@@ -1,4 +1,4 @@
-trajectoire.json
+*.json
 .gdb_history
 *.o
 *.obj
