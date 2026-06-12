@@ -67,7 +67,7 @@ int main() {
   test2.e = exTerre;
   test2.perih = calculDistancePerihelie(test2);
 
-  int step = 365*10;
+  int step = 365 * 10;
   init_trajectory(&test2.traj, step);
 
   // Points de departs
@@ -81,17 +81,18 @@ int main() {
   depart.t = 0.0;
   add_point(&test2.traj, depart);
 
-  eulerSimple(&test2, step, DT);
+  eulerSimple(&test2, step);
 
   // Export en JSON
-  FILE *fichier = fopen("trajectoire.json", "w");
+  FILE *fichier = fopen("trajectoire_t2_eulerSimple.json", "w");
   if (fichier == NULL) {
     printf("Erreur ouverture fichier\n");
     return 1;
   }
   exportJson(&test2, fichier);
   fclose(fichier);
-  printf("Fichier trajectoire.json genere avec %d points\n", test2.traj.size);
+  printf("Fichier trajectoire_t2_eulerSimple.json genere avec %d points\n",
+         test2.traj.size);
 
   printf(";============================================================\n");
   printf("TEST 4: Test Ep\n");
@@ -99,6 +100,39 @@ int main() {
 
   printf("Marge de difference Em : %e\n", energieMecanique(&test2));
 
+  planet test3;
+  test3.name = "Planete test 3";
+  test3.mass = masseTerre;
+  test3.dga = dgaTerre;
+  test3.e = exTerre;
+  test3.perih = calculDistancePerihelie(test3);
+
+  init_trajectory(&test3.traj, step);
+
+  // Points de departs
+  depart.r.x = test3.perih;
+  depart.r.y = 0.0;
+  depart.r.z = 0.0;
+  depart.v.x = 0.0;
+  depart.v.y = calculVitessePerihelie(test3);
+  depart.v.z = 0.0;
+  depart.t = 0.0;
+  add_point(&test3.traj, depart);
+
+  eulerAsym(&test3, step);
+
+  // Export en JSON
+  FILE *fichier2 = fopen("trajectoire_t3_eulerAsym.json", "w");
+  if (fichier2 == NULL) {
+    printf("Erreur ouverture fichier\n");
+    return 1;
+  }
+  exportJson(&test3, fichier2); // Fixed: test3
+  fclose(fichier2);
+  printf("Fichier trajectoire_t3_eulerAsym.json genere avec %d points\n",
+         test3.traj.size);
+
   free_trajectory(&test2.traj);
+  free_trajectory(&test3.traj);
   return 0;
 }

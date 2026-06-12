@@ -19,11 +19,11 @@ double calculVitessePerihelie(planet p) {
 }
 
 // euler simple
-void eulerSimple(planet *p, int step, double temps) {
+void eulerSimple(planet *p, int step) {
   /*
    * accell = dv_x / dt
    * position a t_n+1 : r = r + v * dt
-   * vitesse a t_n+1 : v = v * a * dt
+   * vitesse a t_n+1 : v = v + a * dt
    */
 
   // Initial values
@@ -38,6 +38,41 @@ void eulerSimple(planet *p, int step, double temps) {
     // Calculating new possitions
     vector newPos = vec_add(pos, vec_scale(v, DT));
     vector newVit = vec_add(v, vec_scale(acc, DT));
+    t += DT;
+
+    // Adding new points to the trajectory
+    point newPoint;
+    newPoint.r = newPos;
+    newPoint.v = newVit;
+    newPoint.t = t;
+    add_point(&p->traj, newPoint);
+
+    // Changing values for next step
+    pos = newPos;
+    v = newVit;
+  }
+}
+
+// Euler asym
+void eulerAsym(planet *p, int step) {
+  /*
+   * accell = dv_x / dt
+   * vitesse a t_n+1 : v = v + a * dt
+   * position a t_n+1 : r = r + v_tn+1 * dt
+   */
+
+  // Initial values
+  vector pos = p->traj.p[0].r;
+  vector v = p->traj.p[0].v;
+  double t = p->traj.p[0].t;
+
+  // Euler calcul loop
+  for (int i = 0; i < step; ++i) {
+    vector acc = accel(pos);
+
+    // Calculating new possitions
+    vector newVit = vec_add(v, vec_scale(acc, DT));
+    vector newPos = vec_add(pos, vec_scale(newVit, DT));
     t += DT;
 
     // Adding new points to the trajectory
@@ -111,6 +146,6 @@ double energieMecanique(planet *p) {
       min_eM = eM;
     }
   };
-  double ecartEm = max_eM-min_eM;
+  double ecartEm = max_eM - min_eM;
   return ecartEm;
 }
