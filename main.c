@@ -133,29 +133,4 @@ int main() {
   free_trajectory(&test2.traj);
   free_trajectory(&test3.traj);
   return 0;
-
-  /****************************************************************************/
-  /* void exportJson(planet * p, FILE * fichier) {			      */
-  /*   // Ajoute le nom de la planete					      */
-  /*   fprintf(fichier, "\n");						      */
-  /*   fprintf(fichier, "{\"%s-euler\": [\n", p->name);			      */
-  /* 									      */
-  /*   // Ajoute chaque coordonnees					      */
-  /*   for (int i = 0; i < p->traj.size; i++) {				      */
-  /*     point pt = p->traj.p[i];					      */
-  /* 									      */
-  /*     fprintf(fichier, "[[%e, %e, %e], [%e, %e, %e], %d]", pt.r.x, pt.r.y, */
-  /*             pt.r.z, pt.v.x, pt.v.y, pt.v.z, (int)pt.t);		      */
-  /* 									      */
-  /*     // Si dernier element -> virgule, sinon non			      */
-  /*     if (i < p->traj.size - 1)					      */
-  /*       fprintf(fichier, ",\n");					      */
-  /*     else								      */
-  /*       fprintf(fichier, "\n");					      */
-  /*   }								      */
-  /* 									      */
-  /*   // On fini le fichier						      */
-  /*   fprintf(fichier, "]}\n");					      */
-  /* }									      */
-  /****************************************************************************/
 }
