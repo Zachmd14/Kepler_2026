@@ -84,14 +84,12 @@ int main() {
   eulerSimple(&test2, step);
 
   // Export en JSON
-  FILE *fichier = fopen("trajectoire_t2_eulerSimple.json", "w");
+  FILE *fichier = fopen("trajectoire.json", "w");
   if (fichier == NULL) {
     printf("Erreur ouverture fichier\n");
     return 1;
   }
-  exportJson(&test2, fichier);
-  fclose(fichier);
-  printf("Fichier trajectoire_t2_eulerSimple.json genere avec %d points\n",
+  printf("Fichier trajectoire.json genere avec %d points\n",
          test2.traj.size);
 
   printf(";============================================================\n");
@@ -122,17 +120,42 @@ int main() {
   eulerAsym(&test3, step);
 
   // Export en JSON
-  FILE *fichier2 = fopen("trajectoire_t3_eulerAsym.json", "w");
-  if (fichier2 == NULL) {
-    printf("Erreur ouverture fichier\n");
-    return 1;
-  }
-  exportJson(&test3, fichier2); // Fixed: test3
-  fclose(fichier2);
-  printf("Fichier trajectoire_t3_eulerAsym.json genere avec %d points\n",
+  fprintf(fichier, "{\n");
+  exportJson(&test2, fichier);
+  fprintf(fichier, ",\n");
+  exportJson(&test3, fichier);
+  fprintf(fichier, "\n}\n");
+
+  fclose(fichier);
+  printf("Fichier trajectoire.json genere avec %d points\n",
          test3.traj.size);
 
   free_trajectory(&test2.traj);
   free_trajectory(&test3.traj);
   return 0;
+
+  /****************************************************************************/
+  /* void exportJson(planet * p, FILE * fichier) {			      */
+  /*   // Ajoute le nom de la planete					      */
+  /*   fprintf(fichier, "\n");						      */
+  /*   fprintf(fichier, "{\"%s-euler\": [\n", p->name);			      */
+  /* 									      */
+  /*   // Ajoute chaque coordonnees					      */
+  /*   for (int i = 0; i < p->traj.size; i++) {				      */
+  /*     point pt = p->traj.p[i];					      */
+  /* 									      */
+  /*     fprintf(fichier, "[[%e, %e, %e], [%e, %e, %e], %d]", pt.r.x, pt.r.y, */
+  /*             pt.r.z, pt.v.x, pt.v.y, pt.v.z, (int)pt.t);		      */
+  /* 									      */
+  /*     // Si dernier element -> virgule, sinon non			      */
+  /*     if (i < p->traj.size - 1)					      */
+  /*       fprintf(fichier, ",\n");					      */
+  /*     else								      */
+  /*       fprintf(fichier, "\n");					      */
+  /*   }								      */
+  /* 									      */
+  /*   // On fini le fichier						      */
+  /*   fprintf(fichier, "]}\n");					      */
+  /* }									      */
+  /****************************************************************************/
 }
