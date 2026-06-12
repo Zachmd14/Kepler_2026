@@ -67,7 +67,7 @@ int main() {
   test2.e = exTerre;
   test2.perih = calculDistancePerihelie(test2);
 
-  int step = 30;
+  int step = 365*10;
   init_trajectory(&test2.traj, step);
 
   // Points de departs
@@ -93,7 +93,12 @@ int main() {
   fclose(fichier);
   printf("Fichier trajectoire.json genere avec %d points\n", test2.traj.size);
 
-  free_trajectory(&test2.traj);
+  printf(";============================================================\n");
+  printf("TEST 4: Test Ep\n");
+  printf(";============================================================\n");
 
+  printf("Marge de difference Em : %e\n", energieMecanique(&test2));
+
+  free_trajectory(&test2.traj);
   return 0;
 }

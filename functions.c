@@ -3,6 +3,7 @@
 #include "vecteurs.h"
 #include <math.h>
 #include <stdatomic.h>
+#include <stddef.h>
 #include <stdio.h>
 
 double calculDistancePerihelie(planet p) {
@@ -72,4 +73,44 @@ void exportJson(planet *p, FILE *fichier) {
 
   // On fini le fichier
   fprintf(fichier, "]}\n");
+}
+
+double energieMecanique(planet *p) {
+  double eP = 0;
+  double eC = 0;
+  double eM = 0;
+  double numEp = constanteGravitation * p->mass * masseSoleil; // numerateur Ep
+  double denEp = 0;                                            // numerateur Ec
+  double max_eM = 0;
+  double min_eM = 0;
+
+  for (int i = 0; i < p->traj.size; ++i) {
+
+    // Energie potentielle
+    denEp = vec_norm(p->traj.p[i].r);
+    if (denEp < 0) {
+      denEp = denEp * (-1);
+    }
+    eP = -(numEp / denEp);
+
+    // Energie cinetique
+    eC = (1.0 / 2.0) * p->mass *
+         (vec_norm(p->traj.p[i].v) * vec_norm(p->traj.p[i].v));
+
+    // Energie mecanique
+    eM = eP + eC;
+    printf("valeur de eM au pas %d : %e\n", i, eM);
+
+    // Calcul ecart
+
+    if (eM > max_eM) {
+      max_eM = eM;
+    }
+
+    if (eM < min_eM) {
+      min_eM = eM;
+    }
+  };
+  double ecartEm = max_eM-min_eM;
+  return ecartEm;
 }
