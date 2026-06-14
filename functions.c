@@ -134,7 +134,7 @@ double energieMecanique(planet *p) {
 
     // Energie mecanique
     eM = eP + eC;
-    printf("valeur de eM au pas %d : %e\n", i, eM);
+    /* printf("valeur de eM au pas %d : %e\n", i, eM); */
 
     // Calcul ecart
 
@@ -148,4 +148,48 @@ double energieMecanique(planet *p) {
   };
   double ecartEm = max_eM - min_eM;
   return ecartEm;
+}
+
+// Runge-Kutta ordre 2 (methode du point milieu)
+void rungeKutta2(planet *p, int step) {
+  /*
+   * k1 = f(t, y)
+   * k2 = f(t + dt/2, y + dt/2 * k1)
+   * y_n+1 = y_n + dt * k2
+   */
+
+  // Initial values
+  vector pos = p->traj.p[0].r;
+  vector v = p->traj.p[0].v;
+  double t = p->traj.p[0].t;
+
+  for (int i = 0; i < step; ++i) {
+    // k1
+    vector k1_pos = v;
+    vector k1_vit = accel(pos);
+
+    // Point milieu
+    vector pos_mid = vec_add(pos, vec_scale(k1_pos, DT / 2.0));
+    vector vit_mid = vec_add(v, vec_scale(k1_vit, DT / 2.0));
+
+    // k2 (evalue au point milieu)
+    vector k2_pos = vit_mid;
+    vector k2_vit = accel(pos_mid);
+
+    // Mise a jour finale
+    vector newPos = vec_add(pos, vec_scale(k2_pos, DT));
+    vector newVit = vec_add(v, vec_scale(k2_vit, DT));
+    t += DT;
+
+    // Ajout du nouveau point
+    point newPoint;
+    newPoint.r = newPos;
+    newPoint.v = newVit;
+    newPoint.t = t;
+    add_point(&p->traj, newPoint);
+
+    // Mise a jour pour la prochaine iteration
+    pos = newPos;
+    v = newVit;
+  }
 }

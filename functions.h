@@ -10,6 +10,9 @@ double calculVitessePerihelie(planet p);
 
 void eulerSimple(planet *p, int step);
 void eulerAsym(planet *p, int step);
+
+void rungeKutta2(planet *p, int step);
+
 void exportJson(planet *p, FILE *fichier);
 
 double energieMecanique(planet *p);
