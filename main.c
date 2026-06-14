@@ -8,129 +8,262 @@ int main() {
   printf(";============================================================\n");
   printf("TEST 1: Vector Scaling (vec_scale)\n");
   printf(";============================================================\n");
-  vector test;
-  test.x = 2;
-  test.y = 4;
-  test.z = 6;
 
-  test = vec_scale(test, 2);
+  vector vecteur;
+  vecteur.x = 2;
+  vecteur.y = 4;
+  vecteur.z = 6;
+  vecteur = vec_scale(vecteur, 2);
   printf("Should be 4\n");
-  printf("value of x : %f\n", test.x);
+  printf("value of x : %f\n", vecteur.x);
 
   printf(";============================================================\n");
   printf("TEST 2: Planet Perihelion Calculation (calculDistancePerihelie)\n");
   printf(";============================================================\n");
-  planet t;
-  t.name = "Terre";
-  t.mass = masseTerre;
-  t.dga = dgaTerre;
-  t.e = exTerre;
-  t.perih = calculDistancePerihelie(t);
 
+  planet terre;
+  terre.name = "Terre";
+  terre.mass = masseTerre;
+  terre.dga = dgaTerre;
+  terre.e = exTerre;
+  terre.perih = calculDistancePerihelie(terre);
   printf("Should be 147 098 291...\n");
-  printf("perihelie terre : %f\n", t.perih);
+  printf("perihelie terre : %f\n", terre.perih);
 
   printf(";============================================================\n");
   printf("TEST 3: Trajectory Initialization and Point Addition\n");
   printf(";============================================================\n");
-  planet tp;
-  tp.name = "test planet";
-  tp.mass = masseTerre;
-  tp.dga = dgaTerre;
-  tp.e = exTerre;
-  tp.perih = calculDistancePerihelie(t);
 
-  init_trajectory(&tp.traj, 10);
+  planet planeteTest;
+  planeteTest.name = "test planet";
+  planeteTest.mass = masseTerre;
+  planeteTest.dga = dgaTerre;
+  planeteTest.e = exTerre;
+  planeteTest.perih = calculDistancePerihelie(planeteTest);
+
+  init_trajectory(&planeteTest.traj, 10);
   for (int i = 0; i < 10; ++i) {
-    point act;
-    act.t = i;
-
-    act.r.x = i * 1.5;
-    act.r.y = 0.0;
-    act.r.z = 0.0;
-    act.v.x = 0.0;
-    act.v.y = 2.5;
-    act.v.z = 0.0;
-
-    add_point(&tp.traj, act);
+    point pt;
+    pt.t = i;
+    pt.r.x = i * 1.5;
+    pt.r.y = 0.0;
+    pt.r.z = 0.0;
+    pt.v.x = 0.0;
+    pt.v.y = 2.5;
+    pt.v.z = 0.0;
+    add_point(&planeteTest.traj, pt);
   }
 
-  printf("Nombre de points enregistres : %d\n", tp.traj.size);
-  for (int i = 0; i < tp.traj.size; i++) {
-    printf("Temps : %f -> Position X : %f\n", tp.traj.p[i].t, tp.traj.p[i].r.x);
+  printf("Nombre de points enregistres : %d\n", planeteTest.traj.size);
+  for (int i = 0; i < planeteTest.traj.size; i++) {
+    printf("Temps : %f -> Position X : %f\n", planeteTest.traj.p[i].t, planeteTest.traj.p[i].r.x);
   }
 
-  planet test2;
-  test2.name = "Planete test 2";
-  test2.mass = masseTerre;
-  test2.dga = dgaTerre;
-  test2.e = exTerre;
-  test2.perih = calculDistancePerihelie(test2);
+  int nbPas = 365 * 3;
 
-  int step = 365 * 10;
-  init_trajectory(&test2.traj, step);
+  printf(";============================================================\n");
+  printf("TEST 4: Test trajectoire\n");
+  printf(";============================================================\n");
 
-  // Points de departs
-  point depart;
-  depart.r.x = test2.perih; // placée sur l'axe X à la périhélie
-  depart.r.y = 0.0;
-  depart.r.z = 0.0;
-  depart.v.x = 0.0;
-  depart.v.y = calculVitessePerihelie(test2); // vitesse perpendiculaire, sur Y
-  depart.v.z = 0.0;
-  depart.t = 0.0;
-  add_point(&test2.traj, depart);
+  // --- Terre ---
 
-  eulerSimple(&test2, step);
+  planet terreEulerSimple;
+  terreEulerSimple.name = "Terre Euler Simple";
+  terreEulerSimple.mass = masseTerre;
+  terreEulerSimple.dga = dgaTerre;
+  terreEulerSimple.e = exTerre;
+  terreEulerSimple.perih = calculDistancePerihelie(terreEulerSimple);
+  init_trajectory(&terreEulerSimple.traj, nbPas);
+  point departTerre;
+  departTerre.r.x = terreEulerSimple.perih;
+  departTerre.r.y = 0.0;
+  departTerre.r.z = 0.0;
+  departTerre.v.x = 0.0;
+  departTerre.v.y = calculVitessePerihelie(terreEulerSimple);
+  departTerre.v.z = 0.0;
+  departTerre.t = 0.0;
+  add_point(&terreEulerSimple.traj, departTerre);
+  eulerSimple(&terreEulerSimple, nbPas);
+  printf("Terre - Marge de difference Em (Euler Simple)  : %e\n", energieMecanique(&terreEulerSimple));
 
-  // Export en JSON
+  planet terreEulerAsym;
+  terreEulerAsym.name = "Terre Euler Asymetrique";
+  terreEulerAsym.mass = masseTerre;
+  terreEulerAsym.dga = dgaTerre;
+  terreEulerAsym.e = exTerre;
+  terreEulerAsym.perih = calculDistancePerihelie(terreEulerAsym);
+  init_trajectory(&terreEulerAsym.traj, nbPas);
+  add_point(&terreEulerAsym.traj, departTerre);
+  eulerAsym(&terreEulerAsym, nbPas);
+
+  planet terreRungeKutta;
+  terreRungeKutta.name = "Terre Runge-Kutta 2";
+  terreRungeKutta.mass = masseTerre;
+  terreRungeKutta.dga = dgaTerre;
+  terreRungeKutta.e = exTerre;
+  terreRungeKutta.perih = calculDistancePerihelie(terreRungeKutta);
+  init_trajectory(&terreRungeKutta.traj, nbPas);
+  add_point(&terreRungeKutta.traj, departTerre);
+  rungeKutta2(&terreRungeKutta, nbPas);
+
+  // --- Mercure ---
+
+  planet mercureEulerSimple;
+  mercureEulerSimple.name = "Mercure Euler Simple";
+  mercureEulerSimple.mass = masseMercure;
+  mercureEulerSimple.dga = dgaMercure;
+  mercureEulerSimple.e = exMercure;
+  mercureEulerSimple.perih = calculDistancePerihelie(mercureEulerSimple);
+  init_trajectory(&mercureEulerSimple.traj, nbPas);
+  point departMercure;
+  departMercure.r.x = mercureEulerSimple.perih;
+  departMercure.r.y = 0.0;
+  departMercure.r.z = 0.0;
+  departMercure.v.x = 0.0;
+  departMercure.v.y = calculVitessePerihelie(mercureEulerSimple);
+  departMercure.v.z = 0.0;
+  departMercure.t = 0.0;
+  add_point(&mercureEulerSimple.traj, departMercure);
+  eulerSimple(&mercureEulerSimple, nbPas);
+  printf("Mercure - Marge de difference Em (Euler Simple) : %e\n", energieMecanique(&mercureEulerSimple));
+
+  planet mercureEulerAsym;
+  mercureEulerAsym.name = "Mercure Euler Asymetrique";
+  mercureEulerAsym.mass = masseMercure;
+  mercureEulerAsym.dga = dgaMercure;
+  mercureEulerAsym.e = exMercure;
+  mercureEulerAsym.perih = calculDistancePerihelie(mercureEulerAsym);
+  init_trajectory(&mercureEulerAsym.traj, nbPas);
+  add_point(&mercureEulerAsym.traj, departMercure);
+  eulerAsym(&mercureEulerAsym, nbPas);
+
+  planet mercureRungeKutta;
+  mercureRungeKutta.name = "Mercure Runge-Kutta 2";
+  mercureRungeKutta.mass = masseMercure;
+  mercureRungeKutta.dga = dgaMercure;
+  mercureRungeKutta.e = exMercure;
+  mercureRungeKutta.perih = calculDistancePerihelie(mercureRungeKutta);
+  init_trajectory(&mercureRungeKutta.traj, nbPas);
+  add_point(&mercureRungeKutta.traj, departMercure);
+  rungeKutta2(&mercureRungeKutta, nbPas);
+
+  // --- Venus ---
+
+  planet venusEulerSimple;
+  venusEulerSimple.name = "Venus Euler Simple";
+  venusEulerSimple.mass = masseVenus;
+  venusEulerSimple.dga = dgaVenus;
+  venusEulerSimple.e = exVenus;
+  venusEulerSimple.perih = calculDistancePerihelie(venusEulerSimple);
+  init_trajectory(&venusEulerSimple.traj, nbPas);
+  point departVenus;
+  departVenus.r.x = venusEulerSimple.perih;
+  departVenus.r.y = 0.0;
+  departVenus.r.z = 0.0;
+  departVenus.v.x = 0.0;
+  departVenus.v.y = calculVitessePerihelie(venusEulerSimple);
+  departVenus.v.z = 0.0;
+  departVenus.t = 0.0;
+  add_point(&venusEulerSimple.traj, departVenus);
+  eulerSimple(&venusEulerSimple, nbPas);
+  printf("Venus  - Marge de difference Em (Euler Simple)  : %e\n", energieMecanique(&venusEulerSimple));
+
+  planet venusEulerAsym;
+  venusEulerAsym.name = "Venus Euler Asymetrique";
+  venusEulerAsym.mass = masseVenus;
+  venusEulerAsym.dga = dgaVenus;
+  venusEulerAsym.e = exVenus;
+  venusEulerAsym.perih = calculDistancePerihelie(venusEulerAsym);
+  init_trajectory(&venusEulerAsym.traj, nbPas);
+  add_point(&venusEulerAsym.traj, departVenus);
+  eulerAsym(&venusEulerAsym, nbPas);
+
+  planet venusRungeKutta;
+  venusRungeKutta.name = "Venus Runge-Kutta 2";
+  venusRungeKutta.mass = masseVenus;
+  venusRungeKutta.dga = dgaVenus;
+  venusRungeKutta.e = exVenus;
+  venusRungeKutta.perih = calculDistancePerihelie(venusRungeKutta);
+  init_trajectory(&venusRungeKutta.traj, nbPas);
+  add_point(&venusRungeKutta.traj, departVenus);
+  rungeKutta2(&venusRungeKutta, nbPas);
+
+  // --- Mars ---
+
+  planet marsEulerSimple;
+  marsEulerSimple.name = "Mars Euler Simple";
+  marsEulerSimple.mass = masseMars;
+  marsEulerSimple.dga = dgaMars;
+  marsEulerSimple.e = exMars;
+  marsEulerSimple.perih = calculDistancePerihelie(marsEulerSimple);
+  init_trajectory(&marsEulerSimple.traj, nbPas);
+  point departMars;
+  departMars.r.x = marsEulerSimple.perih;
+  departMars.r.y = 0.0;
+  departMars.r.z = 0.0;
+  departMars.v.x = 0.0;
+  departMars.v.y = calculVitessePerihelie(marsEulerSimple);
+  departMars.v.z = 0.0;
+  departMars.t = 0.0;
+  add_point(&marsEulerSimple.traj, departMars);
+  eulerSimple(&marsEulerSimple, nbPas);
+  printf("Mars   - Marge de difference Em (Euler Simple)  : %e\n", energieMecanique(&marsEulerSimple));
+
+  planet marsEulerAsym;
+  marsEulerAsym.name = "Mars Euler Asymetrique";
+  marsEulerAsym.mass = masseMars;
+  marsEulerAsym.dga = dgaMars;
+  marsEulerAsym.e = exMars;
+  marsEulerAsym.perih = calculDistancePerihelie(marsEulerAsym);
+  init_trajectory(&marsEulerAsym.traj, nbPas);
+  add_point(&marsEulerAsym.traj, departMars);
+  eulerAsym(&marsEulerAsym, nbPas);
+
+  planet marsRungeKutta;
+  marsRungeKutta.name = "Mars Runge-Kutta 2";
+  marsRungeKutta.mass = masseMars;
+  marsRungeKutta.dga = dgaMars;
+  marsRungeKutta.e = exMars;
+  marsRungeKutta.perih = calculDistancePerihelie(marsRungeKutta);
+  init_trajectory(&marsRungeKutta.traj, nbPas);
+  add_point(&marsRungeKutta.traj, departMars);
+  rungeKutta2(&marsRungeKutta, nbPas);
+
+  // --- Export JSON ---
+
   FILE *fichier = fopen("trajectoire.json", "w");
   if (fichier == NULL) {
     printf("Erreur ouverture fichier\n");
     return 1;
   }
-  printf("Fichier trajectoire.json genere avec %d points\n",
-         test2.traj.size);
 
-  printf(";============================================================\n");
-  printf("TEST 4: Test Ep\n");
-  printf(";============================================================\n");
-
-  printf("Marge de difference Em : %e\n", energieMecanique(&test2));
-
-  planet test3;
-  test3.name = "Planete test 3";
-  test3.mass = masseTerre;
-  test3.dga = dgaTerre;
-  test3.e = exTerre;
-  test3.perih = calculDistancePerihelie(test3);
-
-  init_trajectory(&test3.traj, step);
-
-  // Points de departs
-  depart.r.x = test3.perih;
-  depart.r.y = 0.0;
-  depart.r.z = 0.0;
-  depart.v.x = 0.0;
-  depart.v.y = calculVitessePerihelie(test3);
-  depart.v.z = 0.0;
-  depart.t = 0.0;
-  add_point(&test3.traj, depart);
-
-  eulerAsym(&test3, step);
-
-  // Export en JSON
   fprintf(fichier, "{\n");
-  exportJson(&test2, fichier);
-  fprintf(fichier, ",\n");
-  exportJson(&test3, fichier);
-  fprintf(fichier, "\n}\n");
-
+  exportJson(&terreEulerSimple,   fichier); fprintf(fichier, ",\n");
+  exportJson(&terreEulerAsym,     fichier); fprintf(fichier, ",\n");
+  exportJson(&terreRungeKutta,    fichier); fprintf(fichier, ",\n");
+  exportJson(&mercureEulerSimple, fichier); fprintf(fichier, ",\n");
+  exportJson(&mercureEulerAsym,   fichier); fprintf(fichier, ",\n");
+  exportJson(&mercureRungeKutta,  fichier); fprintf(fichier, ",\n");
+  exportJson(&venusEulerSimple,   fichier); fprintf(fichier, ",\n");
+  exportJson(&venusEulerAsym,     fichier); fprintf(fichier, ",\n");
+  exportJson(&venusRungeKutta,    fichier); fprintf(fichier, ",\n");
+  exportJson(&marsEulerSimple,    fichier); fprintf(fichier, ",\n");
+  exportJson(&marsEulerAsym,      fichier); fprintf(fichier, ",\n");
+  exportJson(&marsRungeKutta,     fichier); fprintf(fichier, "\n}\n");
   fclose(fichier);
-  printf("Fichier trajectoire.json genere avec %d points\n",
-         test3.traj.size);
 
-  free_trajectory(&test2.traj);
-  free_trajectory(&test3.traj);
+  free_trajectory(&terreEulerSimple.traj);
+  free_trajectory(&terreEulerAsym.traj);
+  free_trajectory(&terreRungeKutta.traj);
+  free_trajectory(&mercureEulerSimple.traj);
+  free_trajectory(&mercureEulerAsym.traj);
+  free_trajectory(&mercureRungeKutta.traj);
+  free_trajectory(&venusEulerSimple.traj);
+  free_trajectory(&venusEulerAsym.traj);
+  free_trajectory(&venusRungeKutta.traj);
+  free_trajectory(&marsEulerSimple.traj);
+  free_trajectory(&marsEulerAsym.traj);
+  free_trajectory(&marsRungeKutta.traj);
+
   return 0;
 }
