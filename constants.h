@@ -12,7 +12,7 @@ static const double masseMercure = 3.285*pow(10 , 23); // Masse de Mercure
 static const double exMercure = 0.21; // Excentricite de l'orbite de Mercure
 
 
-static const double dgaVenus = 108 209 500000.0; //Demi-grand axe de Venus
+static const double dgaVenus = 108209500000.0; //Demi-grand axe de Venus
 static const double masseVenus = 4.867*pow(10 , 24); // Masse de Venus
 static const double exVenus = 0.0068; // Excentricite de l'orbite de Venus
 
