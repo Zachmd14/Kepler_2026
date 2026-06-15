@@ -111,46 +111,32 @@ void exportJson(planet *p, FILE *fichier) {
 }
 
 double energieMecanique(planet *p, FILE *energieCSV) {
-  double eP = 0;
-  double eC = 0;
-  double eM = 0;
-  double numEp = constanteGravitation * p->mass * masseSoleil; // numerateur Ep
-  double denEp = 0;                                            // numerateur Ec
-  double max_eM = 0;
-  double min_eM = 0;
+    if (p->traj.size <= 0) return 0.0;
 
-  fprintf(energieCSV, "Cinetique,Potentielle,Mecanique,Point\n");
-  for (int i = 0; i < p->traj.size; ++i) {
+    double numEp = constanteGravitation * p->mass * masseSoleil;
+    
+    fprintf(energieCSV, "Cinetique,Potentielle,Mecanique,Point\n");
 
-    // Energie potentielle
-    denEp = vec_norm(p->traj.p[i].r);
-    if (denEp < 0) {
-      denEp = denEp * (-1);
-    }
-    eP = -(numEp / denEp);
+    double max_eM = -1e300; // Très bas pour être sûr que la première valeur soit supérieure
+    double min_eM = 1e300;  // Très haut pour être sûr que la première valeur soit inférieure
 
-    // Energie cinetique
-    eC = (1.0 / 2.0) * p->mass *
-         (vec_norm(p->traj.p[i].v) * vec_norm(p->traj.p[i].v));
+    for (int i = 0; i < p->traj.size; ++i) {
+        double denEp = vec_norm(p->traj.p[i].r); 
+        double eP = -(numEp / denEp);
 
-    // Energie mecanique
-    eM = eP + eC;
-    /* printf("valeur de eM au pas %d : %e\n", i, eM); */
+        double v_norm = vec_norm(p->traj.p[i].v);
+        double eC = 0.5 * p->mass * (v_norm * v_norm);
 
-    fprintf(energieCSV, "%f,%f,%f,%d\n", eC, eP, eM, i);
+        double eM = eP + eC;
 
-    // Calcul ecart
-    if (eM > max_eM) {
-      max_eM = eM;
+        // Écriture dans le CSV (Utilisation de %e pour les grands nombres scientifiques)
+
+        if (eM > max_eM) max_eM = eM;
+        if (eM < min_eM) min_eM = eM;
     }
 
-    if (eM < min_eM) {
-      min_eM = eM;
-    }
-  };
-
-  double ecartEm = max_eM - min_eM;
-  return ecartEm;
+    double ecartEm = max_eM - min_eM;
+    return ecartEm;
 }
 
 // Runge-Kutta ordre 2
