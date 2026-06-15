@@ -129,7 +129,7 @@ double energieMecanique(planet *p, FILE *energieCSV) {
 
         double eM = eP + eC;
 
-        // Écriture dans le CSV (Utilisation de %e pour les grands nombres scientifiques)
+        fprintf(energieCSV, "%e,%e,%e,%d\n", eC, eP, eM, i);
 
         if (eM > max_eM) max_eM = eM;
         if (eM < min_eM) min_eM = eM;
