@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Projet orbites</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+</head>
+<body>
+  <h1>Projet orbites</h1>
+  <p>Chargez le fichier JSON pour commencer.</p>
+  <p>Maintenez le bouton gauche de la souris enfoncé sur le canvas pour animer la trajectoire.</p>
+  <input type="file" onchange="readFile(this)">
+  <div id="infos"></div>
+  <div id="p5-container"></div>
+
+  <script src="sketch.js"></script>
+
+  <div style="width: 1440px; margin: 30px auto;">
+    <h2>Énergies</h2>
+    <input type="file" id="csvFile" accept=".csv">
+    <div style="position: relative; width: 1440px; height: 400px; margin-top: 20px;">
+      <canvas id="myChart" width="1440" height="400"></canvas>
+    </div>
+  </div>
+
+  <script>
+    let myChart;
+
+    document.getElementById("csvFile").addEventListener("change", function (e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      Papa.parse(file, {
+        header: true,
+        dynamicTyping: true,
+        complete: function (results) {
+          const labels = [];
+          const cinetique = [];
+          const potentielle = [];
+          const mecanique = [];
+
+          results.data.forEach((row) => {
+            if (row.Point == null) return;
+            labels.push(row.Point);
+            cinetique.push(row.Cinetique);
+            potentielle.push(row.Potentielle);
+            mecanique.push(row.Mecanique);
+          });
+
+          const ctx = document.getElementById("myChart").getContext("2d");
+          if (myChart) myChart.destroy();
+
+          myChart = new Chart(ctx, {
+            type: "line",
+            data: {
+              labels: labels,
+              datasets: [
+                {
+                  label: "Énergie cinétique",
+                  data: cinetique,
+                  borderColor: "rgba(56, 189, 248, 1)",
+                  backgroundColor: "rgba(56, 189, 248, 0.1)",
+                  borderWidth: 1.5,
+                  pointRadius: 0,
+                  tension: 0.1,
+                },
+                {
+                  label: "Énergie potentielle",
+                  data: potentielle,
+                  borderColor: "rgba(239, 68, 68, 1)",
+                  backgroundColor: "rgba(239, 68, 68, 0.1)",
+                  borderWidth: 1.5,
+                  pointRadius: 0,
+                  tension: 0.1,
+                },
+                {
+                  label: "Énergie mécanique",
+                  data: mecanique,
+                  borderColor: "rgba(52, 211, 153, 1)",
+                  backgroundColor: "rgba(52, 211, 153, 0.1)",
+                  borderWidth: 1.5,
+                  pointRadius: 0,
+                  tension: 0.1,
+                },
+              ],
+            },
+            options: {
+              responsive: false,
+              maintainAspectRatio: false,
+              interaction: { mode: "index", intersect: false },
+              plugins: {
+                legend: { position: "top" },
+                tooltip: { mode: "index" },
+              },
+              scales: {
+                x: { title: { display: true, text: "Point (temps)" } },
+                y: { title: { display: true, text: "Énergie (J)" } },
+              },
+            },
+          });
+        },
+      });
+    });
+  </script>
+</body>
+</html>

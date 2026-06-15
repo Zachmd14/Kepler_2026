@@ -15,8 +15,7 @@ void rungeKutta2(planet *p, int step);
 
 void exportJson(planet *p, FILE *fichier);
 
-double energieMecanique(planet *p);
+double energieMecanique(planet *p, FILE *energieCSV);
 
-void diagnostique(planet *p, FILE *fichier); // Fais un diagnostique complet de la planete et le met dans un fichier
 
 #endif

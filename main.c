@@ -56,7 +56,8 @@ int main() {
 
   printf("Nombre de points enregistres : %d\n", planeteTest.traj.size);
   for (int i = 0; i < planeteTest.traj.size; i++) {
-    printf("Temps : %f -> Position X : %f\n", planeteTest.traj.p[i].t, planeteTest.traj.p[i].r.x);
+    printf("Temps : %f -> Position X : %f\n", planeteTest.traj.p[i].t,
+           planeteTest.traj.p[i].r.x);
   }
 
   int nbPas = 365 * 3;
@@ -64,6 +65,7 @@ int main() {
   printf(";============================================================\n");
   printf("TEST 4: Test trajectoire\n");
   printf(";============================================================\n");
+
 
   // --- Terre ---
 
@@ -84,7 +86,6 @@ int main() {
   departTerre.t = 0.0;
   add_point(&terreEulerSimple.traj, departTerre);
   eulerSimple(&terreEulerSimple, nbPas);
-  printf("Terre - Marge de difference Em (Euler Simple)  : %e\n", energieMecanique(&terreEulerSimple));
 
   planet terreEulerAsym;
   terreEulerAsym.name = "Terre Euler Asymetrique";
@@ -125,7 +126,8 @@ int main() {
   departMercure.t = 0.0;
   add_point(&mercureEulerSimple.traj, departMercure);
   eulerSimple(&mercureEulerSimple, nbPas);
-  printf("Mercure - Marge de difference Em (Euler Simple) : %e\n", energieMecanique(&mercureEulerSimple));
+  /* printf("Mercure - Marge de difference Em (Euler Simple) : %e\n",
+   * energieMecanique(&mercureEulerSimple, energieCSV)); */
 
   planet mercureEulerAsym;
   mercureEulerAsym.name = "Mercure Euler Asymetrique";
@@ -166,7 +168,8 @@ int main() {
   departVenus.t = 0.0;
   add_point(&venusEulerSimple.traj, departVenus);
   eulerSimple(&venusEulerSimple, nbPas);
-  printf("Venus  - Marge de difference Em (Euler Simple)  : %e\n", energieMecanique(&venusEulerSimple));
+  /* printf("Venus  - Marge de difference Em (Euler Simple)  : %e\n",
+   * energieMecanique(&venusEulerSimple, energieCSV)); */
 
   planet venusEulerAsym;
   venusEulerAsym.name = "Venus Euler Asymetrique";
@@ -207,7 +210,8 @@ int main() {
   departMars.t = 0.0;
   add_point(&marsEulerSimple.traj, departMars);
   eulerSimple(&marsEulerSimple, nbPas);
-  printf("Mars   - Marge de difference Em (Euler Simple)  : %e\n", energieMecanique(&marsEulerSimple));
+  /* printf("Mars   - Marge de difference Em (Euler Simple)  : %e\n",
+   * energieMecanique(&marsEulerSimple, energieCSV)); */
 
   planet marsEulerAsym;
   marsEulerAsym.name = "Mars Euler Asymetrique";
@@ -237,20 +241,250 @@ int main() {
     return 1;
   }
 
+  // fichier trajectoires.json avec toutes les planetes
   fprintf(fichier, "{\n");
-  exportJson(&terreEulerSimple,   fichier); fprintf(fichier, ",\n");
-  exportJson(&terreEulerAsym,     fichier); fprintf(fichier, ",\n");
-  exportJson(&terreRungeKutta,    fichier); fprintf(fichier, ",\n");
-  exportJson(&mercureEulerSimple, fichier); fprintf(fichier, ",\n");
-  exportJson(&mercureEulerAsym,   fichier); fprintf(fichier, ",\n");
-  exportJson(&mercureRungeKutta,  fichier); fprintf(fichier, ",\n");
-  exportJson(&venusEulerSimple,   fichier); fprintf(fichier, ",\n");
-  exportJson(&venusEulerAsym,     fichier); fprintf(fichier, ",\n");
-  exportJson(&venusRungeKutta,    fichier); fprintf(fichier, ",\n");
-  exportJson(&marsEulerSimple,    fichier); fprintf(fichier, ",\n");
-  exportJson(&marsEulerAsym,      fichier); fprintf(fichier, ",\n");
-  exportJson(&marsRungeKutta,     fichier); fprintf(fichier, "\n}\n");
+  exportJson(&terreEulerSimple, fichier);
+  fprintf(fichier, ",\n");
+  exportJson(&terreEulerAsym, fichier);
+  fprintf(fichier, ",\n");
+  exportJson(&terreRungeKutta, fichier);
+  fprintf(fichier, ",\n");
+  exportJson(&mercureEulerSimple, fichier);
+  fprintf(fichier, ",\n");
+  exportJson(&mercureEulerAsym, fichier);
+  fprintf(fichier, ",\n");
+  exportJson(&mercureRungeKutta, fichier);
+  fprintf(fichier, ",\n");
+  exportJson(&venusEulerSimple, fichier);
+  fprintf(fichier, ",\n");
+  exportJson(&venusEulerAsym, fichier);
+  fprintf(fichier, ",\n");
+  exportJson(&venusRungeKutta, fichier);
+  fprintf(fichier, ",\n");
+  exportJson(&marsEulerSimple, fichier);
+  fprintf(fichier, ",\n");
+  exportJson(&marsEulerAsym, fichier);
+  fprintf(fichier, ",\n");
+  exportJson(&marsRungeKutta, fichier);
+  fprintf(fichier, "\n}\n");
   fclose(fichier);
+
+  // fichiers individuels
+
+  // --- Terre ---
+  FILE *fTerreEulerSimple = fopen("trajectoireTerreEulerSimple.json", "w");
+  if (fTerreEulerSimple == NULL) {
+    printf("Erreur ouverture fichier\n");
+    return 1;
+  }
+  exportJson(&terreEulerSimple, fTerreEulerSimple);
+
+  FILE *fTerreEulerAsym = fopen("trajectoireTerreEulerAsym.json", "w");
+  if (fTerreEulerAsym == NULL) {
+    printf("Erreur ouverture fichier\n");
+    return 1;
+  }
+  exportJson(&terreEulerAsym, fTerreEulerAsym);
+  FILE *fTerreRungeKutta = fopen("trajectoireTerreRungeKutta.json", "w");
+  if (fTerreRungeKutta == NULL) {
+    printf("Erreur ouverture fichier\n");
+    return 1;
+  }
+  exportJson(&terreRungeKutta, fTerreRungeKutta);
+  fclose(fTerreRungeKutta);
+
+  // --- MERCURE ---
+  FILE *fMercureEulerSimple = fopen("trajectoireMercureEulerSimple.json", "w");
+  if (fMercureEulerSimple == NULL) {
+    printf("Erreur ouverture fichier\n");
+    return 1;
+  }
+  exportJson(&mercureEulerSimple, fMercureEulerSimple);
+  fclose(fMercureEulerSimple);
+
+  FILE *fMercureEulerAsym = fopen("trajectoireMercureEulerAsym.json", "w");
+  if (fMercureEulerAsym == NULL) {
+    printf("Erreur ouverture fichier\n");
+    return 1;
+  }
+  exportJson(&mercureEulerAsym, fMercureEulerAsym);
+  fclose(fMercureEulerAsym);
+
+  FILE *fMercureRungeKutta = fopen("trajectoireMercureRungeKutta.json", "w");
+  if (fMercureRungeKutta == NULL) {
+    printf("Erreur ouverture fichier\n");
+    return 1;
+  }
+  exportJson(&mercureRungeKutta, fMercureRungeKutta);
+  fclose(fMercureRungeKutta);
+
+  // --- VENUS ---
+  FILE *fVenusEulerSimple = fopen("trajectoireVenusEulerSimple.json", "w");
+  if (fVenusEulerSimple == NULL) {
+    printf("Erreur ouverture fichier\n");
+    return 1;
+  }
+  exportJson(&venusEulerSimple, fVenusEulerSimple);
+  fclose(fVenusEulerSimple);
+
+  FILE *fVenusEulerAsym = fopen("trajectoireVenusEulerAsym.json", "w");
+  if (fVenusEulerAsym == NULL) {
+    printf("Erreur ouverture fichier\n");
+    return 1;
+  }
+  exportJson(&venusEulerAsym, fVenusEulerAsym);
+  fclose(fVenusEulerAsym);
+
+  FILE *fVenusRungeKutta = fopen("trajectoireVenusRungeKutta.json", "w");
+  if (fVenusRungeKutta == NULL) {
+    printf("Erreur ouverture fichier\n");
+    return 1;
+  }
+  exportJson(&venusRungeKutta, fVenusRungeKutta);
+  fclose(fVenusRungeKutta);
+
+  // --- MARS ---
+  FILE *fMarsEulerSimple = fopen("trajectoireMarsEulerSimple.json", "w");
+  if (fMarsEulerSimple == NULL) {
+    printf("Erreur ouverture fichier\n");
+    return 1;
+  }
+  exportJson(&marsEulerSimple, fMarsEulerSimple);
+  fclose(fMarsEulerSimple);
+
+  FILE *fMarsEulerAsym = fopen("trajectoireMarsEulerAsym.json", "w");
+  if (fMarsEulerAsym == NULL) {
+    printf("Erreur ouverture fichier\n");
+    return 1;
+  }
+  exportJson(&marsEulerAsym, fMarsEulerAsym);
+  fclose(fMarsEulerAsym);
+
+  FILE *fMarsRungeKutta = fopen("trajectoireMarsRungeKutta.json", "w");
+  if (fMarsRungeKutta == NULL) {
+    printf("Erreur ouverture fichier\n");
+    return 1;
+  }
+  exportJson(&marsRungeKutta, fMarsRungeKutta);
+  fclose(fMarsRungeKutta);
+
+  // Energies mecaniques
+
+  // --- TERRE ---
+  
+  FILE *fEnergieTerreSimple = fopen("energiesTerreEulerSimple.csv", "w");
+  if (fEnergieTerreSimple == NULL) {
+    printf("Erreur ouverture fichier\n");
+    return 1;
+  }
+  printf("Terre - Marge de difference Em (Euler Simple)    : %e\n",
+         energieMecanique(&terreEulerSimple, fEnergieTerreSimple));
+  fclose(fEnergieTerreSimple);
+
+  FILE *fEnergieTerreAsym = fopen("energiesTerreEulerAsym.csv", "w");
+  if (fEnergieTerreAsym == NULL) {
+    printf("Erreur ouverture fichier\n");
+    return 1;
+  }
+  printf("Terre - Marge de difference Em (Euler Asym)      : %e\n",
+         energieMecanique(&terreEulerAsym, fEnergieTerreAsym));
+  fclose(fEnergieTerreAsym);
+
+  FILE *fEnergieTerreRK = fopen("energiesTerreRungeKutta.csv", "w");
+  if (fEnergieTerreRK == NULL) {
+    printf("Erreur ouverture fichier\n");
+    return 1;
+  }
+  printf("Terre - Marge de difference Em (Runge-Kutta)    : %e\n",
+         energieMecanique(&terreRungeKutta, fEnergieTerreRK));
+  fclose(fEnergieTerreRK);
+
+  // --- MERCURE ---
+
+  FILE *fEnergieMercureSimple = fopen("energiesMercureEulerSimple.csv", "w");
+  if (fEnergieMercureSimple == NULL) {
+    printf("Erreur ouverture fichier\n");
+    return 1;
+  }
+  printf("Mercure - Marge de difference Em (Euler Simple)  : %e\n",
+         energieMecanique(&mercureEulerSimple, fEnergieMercureSimple));
+  fclose(fEnergieMercureSimple);
+
+  FILE *fEnergieMercureAsym = fopen("energiesMercureEulerAsym.csv", "w");
+  if (fEnergieMercureAsym == NULL) {
+    printf("Erreur ouverture fichier\n");
+    return 1;
+  }
+  printf("Mercure - Marge de difference Em (Euler Asym)    : %e\n",
+         energieMecanique(&mercureEulerAsym, fEnergieMercureAsym));
+  fclose(fEnergieMercureAsym);
+
+  FILE *fEnergieMercureRK = fopen("energiesMercureRungeKutta.csv", "w");
+  if (fEnergieMercureRK == NULL) {
+    printf("Erreur ouverture fichier\n");
+    return 1;
+  }
+  printf("Mercure - Marge de difference Em (Runge-Kutta)  : %e\n",
+         energieMecanique(&mercureRungeKutta, fEnergieMercureRK));
+  fclose(fEnergieMercureRK);
+
+  // --- VENUS ---
+
+  FILE *fEnergieVenusSimple = fopen("energiesVenusEulerSimple.csv", "w");
+  if (fEnergieVenusSimple == NULL) {
+    printf("Erreur ouverture fichier\n");
+    return 1;
+  }
+  printf("Venus - Marge de difference Em (Euler Simple)    : %e\n",
+         energieMecanique(&venusEulerSimple, fEnergieVenusSimple));
+  fclose(fEnergieVenusSimple);
+
+  FILE *fEnergieVenusAsym = fopen("energiesVenusEulerAsym.csv", "w");
+  if (fEnergieVenusAsym == NULL) {
+    printf("Erreur ouverture fichier\n");
+    return 1;
+  }
+  printf("Venus - Marge de difference Em (Euler Asym)      : %e\n",
+         energieMecanique(&venusEulerAsym, fEnergieVenusAsym));
+  fclose(fEnergieVenusAsym);
+
+  FILE *fEnergieVenusRK = fopen("energiesVenusRungeKutta.csv", "w");
+  if (fEnergieVenusRK == NULL) {
+    printf("Erreur ouverture fichier\n");
+    return 1;
+  }
+  printf("Venus - Marge de difference Em (Runge-Kutta)    : %e\n",
+         energieMecanique(&venusRungeKutta, fEnergieVenusRK));
+  fclose(fEnergieVenusRK);
+
+  // --- MARS ---
+
+  FILE *fEnergieMarsSimple = fopen("energiesMarsEulerSimple.csv", "w");
+  if (fEnergieMarsSimple == NULL) {
+    printf("Erreur ouverture fichier\n");
+    return 1;
+  }
+  printf("Mars - Marge de difference Em (Euler Simple)     : %e\n",
+         energieMecanique(&marsEulerSimple, fEnergieMarsSimple));
+  fclose(fEnergieMarsSimple);
+
+  FILE *fEnergieMarsAsym = fopen("energiesMarsEulerAsym.csv", "w");
+  if (fEnergieMarsAsym == NULL) {
+    printf("Erreur ouverture fichier\n");
+    return 1;
+  }
+  printf("Mars - Marge de difference Em (Euler Asym)       : %e\n",
+         energieMecanique(&marsEulerAsym, fEnergieMarsAsym));
+  fclose(fEnergieMarsAsym);
+
+  FILE *fEnergieMarsRK = fopen("energiesMarsRungeKutta.csv", "w");
+  if (fEnergieMarsRK == NULL) {
+    printf("Erreur ouverture fichier\n");
+    return 1;
+  }
+  printf("Mars - Marge de difference Em (Runge-Kutta)     : %e\n",
+         energieMecanique(&marsRungeKutta, fEnergieMarsRK));
+  fclose(fEnergieMarsRK);
 
   free_trajectory(&terreEulerSimple.traj);
   free_trajectory(&terreEulerAsym.traj);

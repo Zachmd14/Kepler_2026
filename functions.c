@@ -110,7 +110,7 @@ void exportJson(planet *p, FILE *fichier) {
   fprintf(fichier, "]}\n");
 }
 
-double energieMecanique(planet *p) {
+double energieMecanique(planet *p, FILE *energieCSV) {
   double eP = 0;
   double eC = 0;
   double eM = 0;
@@ -119,6 +119,7 @@ double energieMecanique(planet *p) {
   double max_eM = 0;
   double min_eM = 0;
 
+  fprintf(energieCSV, "Cinetique,Potentielle,Mecanique,Point\n");
   for (int i = 0; i < p->traj.size; ++i) {
 
     // Energie potentielle
@@ -136,8 +137,9 @@ double energieMecanique(planet *p) {
     eM = eP + eC;
     /* printf("valeur de eM au pas %d : %e\n", i, eM); */
 
-    // Calcul ecart
+    fprintf(energieCSV, "%f,%f,%f,%d\n", eC, eP, eM, i);
 
+    // Calcul ecart
     if (eM > max_eM) {
       max_eM = eM;
     }
@@ -146,11 +148,12 @@ double energieMecanique(planet *p) {
       min_eM = eM;
     }
   };
+
   double ecartEm = max_eM - min_eM;
   return ecartEm;
 }
 
-// Runge-Kutta ordre 2 (methode du point milieu)
+// Runge-Kutta ordre 2
 void rungeKutta2(planet *p, int step) {
   /*
    * k1 = f(t, y)
