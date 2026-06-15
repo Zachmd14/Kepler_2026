@@ -60,12 +60,14 @@ int main() {
            planeteTest.traj.p[i].r.x);
   }
 
-  int nbPas = 365 * 3;
+  int coef = 0;
+  printf("Nombre d'annees a simuler : ");
+  scanf("%d", &coef);
+  int nbPas = 365 * coef;
 
   printf(";============================================================\n");
   printf("TEST 4: Test trajectoire\n");
   printf(";============================================================\n");
-
 
   // --- Terre ---
 
@@ -371,7 +373,7 @@ int main() {
   // Energies mecaniques
 
   // --- TERRE ---
-  
+
   FILE *fEnergieTerreSimple = fopen("energiesTerreEulerSimple.csv", "w");
   if (fEnergieTerreSimple == NULL) {
     printf("Erreur ouverture fichier\n");
