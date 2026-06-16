@@ -2,8 +2,6 @@
 #include "constants.h"
 #include "vecteurs.h"
 #include <math.h>
-#include <stdatomic.h>
-#include <stddef.h>
 #include <stdio.h>
 
 double calculDistancePerihelie(planet p) {
@@ -117,8 +115,8 @@ double energieMecanique(planet *p, FILE *energieCSV) {
     
     fprintf(energieCSV, "Cinetique,Potentielle,Mecanique,Point\n");
 
-    double max_eM = -1e300; // Très bas pour être sûr que la première valeur soit supérieure
-    double min_eM = 1e300;  // Très haut pour être sûr que la première valeur soit inférieure
+    double max_eM = -1e300; // tres petit pour que la premiere valeur soit superieur
+    double min_eM = 1e300;
 
     for (int i = 0; i < p->traj.size; ++i) {
         double denEp = vec_norm(p->traj.p[i].r); 
